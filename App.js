@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet, Text, View, TouchableHighlight, Button } from 'react-native';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -84,21 +84,24 @@ export default class App extends React.Component {
       {this.state.error === null ? (
         <View>
           <Text style={styles.operation}>{this.state.numberLeft} {this.state.operator} {this.state.numberRight}</Text>
-          <Button
+          <TouchableHighlight
             onPress={this.state.numberToSelectCorrectAnswerButton == 0 ? this.handleCorrectResult : this.handleErrorResult}
-            title={this.state.numberToSelectCorrectAnswerButton == 0 ? this.state.correctAnswer.toString() : this.generateFakeAnswer()}
             style={styles.button}
-          />
-          <Button
+          >
+            <Text>{this.state.numberToSelectCorrectAnswerButton == 0 ? this.state.correctAnswer.toString() : this.generateFakeAnswer()}</Text>
+          </TouchableHighlight>
+          <TouchableHighlight
             onPress={this.state.numberToSelectCorrectAnswerButton == 1 ? this.handleCorrectResult : this.handleErrorResult}
-            title={this.state.numberToSelectCorrectAnswerButton == 1 ? this.state.correctAnswer.toString() : this.generateFakeAnswer()}
             style={styles.button}
-          />
-          <Button
+          >
+            <Text>{this.state.numberToSelectCorrectAnswerButton == 1 ? this.state.correctAnswer.toString() : this.generateFakeAnswer()}</Text>
+          </TouchableHighlight>
+          <TouchableHighlight
             onPress={this.state.numberToSelectCorrectAnswerButton == 2 ? this.handleCorrectResult : this.handleErrorResult}
-            title={this.state.numberToSelectCorrectAnswerButton == 2 ? this.state.correctAnswer.toString() : this.generateFakeAnswer()}
             style={styles.button}
-          />
+          >
+            <Text>{this.state.numberToSelectCorrectAnswerButton == 2 ? this.state.correctAnswer.toString() : this.generateFakeAnswer()}</Text>
+          </TouchableHighlight>
         </View>) : null}
         {this.state.error != null ? (
         <View>
@@ -106,7 +109,7 @@ export default class App extends React.Component {
           <Button
             onPress={this.restart}
             title="Play Again"
-            style={styles.button}
+            color="#EFEFEF"
           />
         </View>) : null}
       </View>
@@ -128,7 +131,6 @@ const styles = StyleSheet.create({
   button: {
     alignItems: 'center',
     backgroundColor: '#2B3A42',
-    color: '#EFEFEF',
     padding: 10
   },
   errorText: {
