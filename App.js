@@ -15,6 +15,7 @@ export default class App extends React.Component {
       numberRight: Math.floor(Math.random() * (10 - 0 + 1)) + 0,
       numberToSelectCorrectAnswerButton: Math.floor(Math.random() * (2 - 0 + 1)) + 0,
       operatorsArray: ['+', '-', '*'],
+      puntuation: 0,
       operator: '',
       correctAnswer: '',
       error: null
@@ -36,7 +37,8 @@ export default class App extends React.Component {
         return {
           numberLeft: Math.floor(Math.random() * (10 - 0 + 1)) + 0,
           numberRight: Math.floor(Math.random() * (10 - 0 + 1)) + 0,
-          operator: prevState.operatorsArray[Math.floor(Math.random() * (2 - 0 + 1)) + 0]
+          operator: prevState.operatorsArray[Math.floor(Math.random() * (2 - 0 + 1)) + 0],
+          puntuation: prevState.puntuation + 1
         }
       }, () => {
         this.handleAnswerButtons()
@@ -75,33 +77,49 @@ export default class App extends React.Component {
   }
 
   restart() {
-    this.setState({error: null});
+    this.setState(() => {
+      return {
+        error: null,
+        puntuation: 0
+      }
+    });
   }
 
   render() {
     return (
       <View style={styles.container}>
+      <Text style={styles.operation}>Score: {this.state.puntuation}</Text>
       {this.state.error === null ? (
         <View>
+          <Text style={styles.operation}> &nbsp; </Text>
           <Text style={styles.operation}>{this.state.numberLeft} {this.state.operator} {this.state.numberRight}</Text>
-          <TouchableHighlight
-            onPress={this.state.numberToSelectCorrectAnswerButton == 0 ? this.handleCorrectResult : this.handleErrorResult}
-            style={styles.button}
-          >
-            <Text>{this.state.numberToSelectCorrectAnswerButton == 0 ? this.state.correctAnswer.toString() : this.generateFakeAnswer()}</Text>
-          </TouchableHighlight>
-          <TouchableHighlight
-            onPress={this.state.numberToSelectCorrectAnswerButton == 1 ? this.handleCorrectResult : this.handleErrorResult}
-            style={styles.button}
-          >
-            <Text>{this.state.numberToSelectCorrectAnswerButton == 1 ? this.state.correctAnswer.toString() : this.generateFakeAnswer()}</Text>
-          </TouchableHighlight>
-          <TouchableHighlight
-            onPress={this.state.numberToSelectCorrectAnswerButton == 2 ? this.handleCorrectResult : this.handleErrorResult}
-            style={styles.button}
-          >
-            <Text>{this.state.numberToSelectCorrectAnswerButton == 2 ? this.state.correctAnswer.toString() : this.generateFakeAnswer()}</Text>
-          </TouchableHighlight>
+          <Text style={styles.operation}> &nbsp; </Text>
+          <View style={{flexDirection: 'row'}}>
+            <View>
+              <TouchableHighlight
+                onPress={this.state.numberToSelectCorrectAnswerButton == 0 ? this.handleCorrectResult : this.handleErrorResult}
+                style={styles.button}
+              >
+                <Text style={styles.buttonText}>{this.state.numberToSelectCorrectAnswerButton == 0 ? this.state.correctAnswer.toString() : this.generateFakeAnswer()}</Text>
+              </TouchableHighlight>
+            </View>
+            <View>
+              <TouchableHighlight
+                onPress={this.state.numberToSelectCorrectAnswerButton == 1 ? this.handleCorrectResult : this.handleErrorResult}
+                style={styles.button}
+              >
+                <Text style={styles.buttonText}>{this.state.numberToSelectCorrectAnswerButton == 1 ? this.state.correctAnswer.toString() : this.generateFakeAnswer()}</Text>
+              </TouchableHighlight>
+            </View>
+            <View>
+              <TouchableHighlight
+                onPress={this.state.numberToSelectCorrectAnswerButton == 2 ? this.handleCorrectResult : this.handleErrorResult}
+                style={styles.button}
+              >
+                <Text style={styles.buttonText}>{this.state.numberToSelectCorrectAnswerButton == 2 ? this.state.correctAnswer.toString() : this.generateFakeAnswer()}</Text>
+              </TouchableHighlight>
+            </View>
+          </View>
         </View>) : null}
         {this.state.error != null ? (
         <View>
@@ -132,6 +150,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#2B3A42',
     padding: 10
+  },
+  buttonText: {
+    fontSize: 45,
+    color: '#EFEFEF'
   },
   errorText: {
     fontSize: 80,
