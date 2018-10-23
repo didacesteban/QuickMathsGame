@@ -15,9 +15,13 @@ export default class App extends React.Component {
       numberRight: Math.floor(Math.random() * (10 - 0 + 1)) + 0,
       numberToSelectCorrectAnswerButton: Math.floor(Math.random() * (2 - 0 + 1)) + 0,
       operatorsArray: ['+', '-', '*'],
+      time: 30,
+      maxValue: 10,
+      difficulty: 5,
       puntuation: 0,
       operator: '',
       correctAnswer: '',
+      lives: 3,
       error: null
     };
   }
@@ -35,13 +39,14 @@ export default class App extends React.Component {
     this.setState(prevState =>
       {
         return {
-          numberLeft: Math.floor(Math.random() * (10 - 0 + 1)) + 0,
-          numberRight: Math.floor(Math.random() * (10 - 0 + 1)) + 0,
+          numberLeft: Math.floor(Math.random() * (prevState.maxValue - 0 + 1)) + 0,
+          numberRight: Math.floor(Math.random() * (prevState.maxValue - 0 + 1)) + 0,
           operator: prevState.operatorsArray[Math.floor(Math.random() * (2 - 0 + 1)) + 0],
-          puntuation: prevState.puntuation + 1
+          puntuation: prevState.puntuation + 1,
+          maxValue: (prevState.puntuation % 10 == 0 && prevState.puntuation != 0) ? prevState.maxValue + prevState.difficulty : prevState.maxValue
         }
       }, () => {
-        this.handleAnswerButtons()
+        this.handleAnswerButtons();
       });
   }
 
@@ -55,7 +60,7 @@ export default class App extends React.Component {
   }
 
   generateFakeAnswer() {
-    const randNumber = Math.floor(Math.random() * (10 - 0 + 1)) + 0;
+    const randNumber = Math.floor(Math.random() * (this.state.maxValue - 0 + 1)) + 0;
     const randOperator = this.state.operatorsArray[Math.floor(Math.random() * (2 - 0 + 1)) + 0];
     const numberToSelectNumberToOperate = Math.floor(Math.random() * (2 - 1 + 1)) + 1;
 
@@ -73,14 +78,21 @@ export default class App extends React.Component {
   }
 
   handleErrorResult() {
-    this.setState({error: 'You lose'});
+    this.setState(prevState => {
+      return {
+        error: prevState.lives != 1 ? null : 'You lose',
+        lives: prevState.lives != 1 ? prevState.lives - 1 : 0
+      };
+    });
   }
 
   restart() {
     this.setState(() => {
       return {
         error: null,
-        puntuation: 0
+        puntuation: 0,
+        lives: 3,
+        maxValue: 10
       }
     });
   }
@@ -88,22 +100,22 @@ export default class App extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-      <Text style={styles.operation}>Score: {this.state.puntuation}</Text>
+      <Text style={styles.scoreboard}>Time: {this.state.time} Lives: {this.state.lives} Score: {this.state.puntuation}</Text>
       {this.state.error === null ? (
         <View>
           <Text style={styles.operation}> &nbsp; </Text>
           <Text style={styles.operation}>{this.state.numberLeft} {this.state.operator} {this.state.numberRight}</Text>
           <Text style={styles.operation}> &nbsp; </Text>
-          <View style={{flexDirection: 'row'}}>
-            <View>
+          <View>
+            <View style={{flexDirection: 'row'}}>
               <TouchableHighlight
-                onPress={this.state.numberToSelectCorrectAnswerButton == 0 ? this.handleCorrectResult : this.handleErrorResult}
+                onPress={this.state.numberToSelectCorrectAnswerButton === 0 ? this.handleCorrectResult : this.handleErrorResult}
                 style={styles.button}
               >
-                <Text style={styles.buttonText}>{this.state.numberToSelectCorrectAnswerButton == 0 ? this.state.correctAnswer.toString() : this.generateFakeAnswer()}</Text>
+                <Text style={styles.buttonText}>{this.state.numberToSelectCorrectAnswerButton === 0 ? this.state.correctAnswer.toString() : this.generateFakeAnswer()}</Text>
               </TouchableHighlight>
             </View>
-            <View>
+            <View style={{flexDirection: 'row'}}>
               <TouchableHighlight
                 onPress={this.state.numberToSelectCorrectAnswerButton == 1 ? this.handleCorrectResult : this.handleErrorResult}
                 style={styles.button}
@@ -111,7 +123,7 @@ export default class App extends React.Component {
                 <Text style={styles.buttonText}>{this.state.numberToSelectCorrectAnswerButton == 1 ? this.state.correctAnswer.toString() : this.generateFakeAnswer()}</Text>
               </TouchableHighlight>
             </View>
-            <View>
+            <View style={{flexDirection: 'row'}}>
               <TouchableHighlight
                 onPress={this.state.numberToSelectCorrectAnswerButton == 2 ? this.handleCorrectResult : this.handleErrorResult}
                 style={styles.button}
@@ -157,6 +169,10 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 80,
-    color: '#FF530D',
+    color: '#FF530D'
+  },
+  scoreboard: {
+    fontSize: 15,
+    color: '#EFEFEF'
   }
 });
