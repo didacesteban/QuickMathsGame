@@ -30,6 +30,7 @@ export default class App extends React.Component {
       fakeAnswer2: '',
       fakeAnswer3: '',
       lives: 3,
+      startMessage: '5 seconds Math Challenge',
       error: null
     };
     this.timer = 0;
@@ -42,7 +43,6 @@ export default class App extends React.Component {
       }
     });
     this.handleAnswerButtons();
-    this.startTimer();
   }
 
   secondsToTime(secs){
@@ -161,6 +161,7 @@ export default class App extends React.Component {
     this.setState(() => {
       return {
         error: null,
+        startMessage: null,
         puntuation: 0,
         lives: 3,
         maxValue: 10,
@@ -169,15 +170,26 @@ export default class App extends React.Component {
       }
     }, () => {
       this.timer = 0;
-      this.startTimer();
+      this.startTimer(); 
     });
   }
 
   render() {
     return (
       <View style={styles.container}>
-      <Text style={styles.scoreboard}>Time: {this.state.timeRemaining} Lives: {this.state.lives} Score: {this.state.puntuation}</Text>
-      {this.state.error === null ? (
+      {this.state.startMessage != null ? (
+      <View>
+        <Text style={styles.startText}>{this.state.startMessage ? this.state.startMessage : null}</Text>
+        <Button
+          onPress={this.restart}
+          title="Play"
+          color="#EFEFEF"
+        />
+      </View>) : null}
+      {this.state.startMessage == null ? (
+        <Text style={styles.scoreboard}>Time: {this.state.timeRemaining} Lives: {this.state.lives} Score: {this.state.puntuation}</Text>
+      ) : null }
+      {this.state.error === null && this.state.startMessage === null ? (
         <View>
           <Text style={styles.operation}> &nbsp; </Text>
           <Text style={styles.operation}>{this.state.numberLeft} {this.state.operator} {this.state.numberRight}</Text>
@@ -242,6 +254,10 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 45,
     color: '#EFEFEF'
+  },
+  startText: {
+    fontSize: 80,
+    color: '#FFFFFF'
   },
   errorText: {
     fontSize: 80,
