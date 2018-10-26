@@ -9,21 +9,30 @@ export default class App extends React.Component {
     this.handleErrorResult = this.handleErrorResult.bind(this);
     this.handleAnswerButtons = this.handleAnswerButtons.bind(this);
     this.generateFakeAnswer = this.generateFakeAnswer.bind(this);
+    this.startTimer = this.startTimer.bind(this);
+    this.secondsToTime = this.secondsToTime.bind(this);
+    this.countDown = this.countDown.bind(this);
     this.restart = this.restart.bind(this);
+    this.handleEndingTime = this.handleEndingTime.bind(this);
     this.state = {
       numberLeft: Math.floor(Math.random() * (10 - 0 + 1)) + 0,
       numberRight: Math.floor(Math.random() * (10 - 0 + 1)) + 0,
       numberToSelectCorrectAnswerButton: Math.floor(Math.random() * (2 - 0 + 1)) + 0,
       operatorsArray: ['+', '-', '*'],
-      time: 30,
+      maxTime: 5,
+      timeRemaining: 5,
       maxValue: 10,
       difficulty: 5,
       puntuation: 0,
       operator: '',
       correctAnswer: '',
+      fakeAnswer1: '',
+      fakeAnswer2: '',
+      fakeAnswer3: '',
       lives: 3,
       error: null
     };
+    this.timer = 0;
   }
 
   componentDidMount() {
@@ -33,7 +42,49 @@ export default class App extends React.Component {
       }
     });
     this.handleAnswerButtons();
+    this.startTimer();
   }
+
+  secondsToTime(secs){
+    let hours = Math.floor(secs / (60 * 60));
+
+    let divisor_for_minutes = secs % (60 * 60);
+    let minutes = Math.floor(divisor_for_minutes / 60);
+
+    let divisor_for_seconds = divisor_for_minutes % 60;
+    let seconds = Math.ceil(divisor_for_seconds);
+
+    let obj = {
+      "h": hours,
+      "m": minutes,
+      "s": seconds
+    };
+    return obj;
+  }
+
+  startTimer() {
+    if (this.timer == 0 && this.state.timeRemaining > 0) {
+      this.timer = setInterval(this.countDown, 1000);
+    }
+  }
+
+  countDown() {
+   // Remove one second, set state so a re-render happens.
+   let seconds = this.state.timeRemaining - 1;
+   this.setState({
+     maxTime: this.secondsToTime(seconds),
+     timeRemaining: seconds,
+   }, () => {
+     if (seconds === 0) {
+       this.handleEndingTime();
+     }
+   });
+
+   // Check if we're at zero.
+   if (seconds === 0) {
+     clearInterval(this.timer);
+   }
+ }
 
   handleNewOperation() {
     this.setState(prevState =>
@@ -43,11 +94,14 @@ export default class App extends React.Component {
           numberRight: Math.floor(Math.random() * (prevState.maxValue - 0 + 1)) + 0,
           operator: prevState.operatorsArray[Math.floor(Math.random() * (2 - 0 + 1)) + 0],
           puntuation: prevState.puntuation + 1,
+          maxTime: 5,
+          timeRemaining: 5,
           maxValue: (prevState.puntuation % 10 == 0 && prevState.puntuation != 0) ? prevState.maxValue + prevState.difficulty : prevState.maxValue
         }
       }, () => {
         this.handleAnswerButtons();
       });
+      this.startTimer();
   }
 
   handleAnswerButtons() {
@@ -56,6 +110,14 @@ export default class App extends React.Component {
         correctAnswer: eval(`${prevState.numberLeft} ${prevState.operator} ${prevState.numberRight}`),
         numberToSelectCorrectAnswerButton: Math.floor(Math.random() * (2 - 0 + 1)) + 0
       }
+    }, () => {
+      this.setState(() => {
+        return {
+          fakeAnswer1: this.generateFakeAnswer(),
+          fakeAnswer2: this.generateFakeAnswer(),
+          fakeAnswer3: this.generateFakeAnswer()
+        }
+      })
     });
   }
 
@@ -86,21 +148,35 @@ export default class App extends React.Component {
     });
   }
 
+  handleEndingTime() {
+    this.setState(() => {
+      return {
+        error: 'You lose',
+        lives: 0
+      };
+    });
+  }
+
   restart() {
     this.setState(() => {
       return {
         error: null,
         puntuation: 0,
         lives: 3,
-        maxValue: 10
+        maxValue: 10,
+        maxTime: 5,
+        timeRemaining: 5
       }
+    }, () => {
+      this.timer = 0;
+      this.startTimer();
     });
   }
 
   render() {
     return (
       <View style={styles.container}>
-      <Text style={styles.scoreboard}>Time: {this.state.time} Lives: {this.state.lives} Score: {this.state.puntuation}</Text>
+      <Text style={styles.scoreboard}>Time: {this.state.timeRemaining} Lives: {this.state.lives} Score: {this.state.puntuation}</Text>
       {this.state.error === null ? (
         <View>
           <Text style={styles.operation}> &nbsp; </Text>
@@ -112,7 +188,7 @@ export default class App extends React.Component {
                 onPress={this.state.numberToSelectCorrectAnswerButton === 0 ? this.handleCorrectResult : this.handleErrorResult}
                 style={styles.button}
               >
-                <Text style={styles.buttonText}>{this.state.numberToSelectCorrectAnswerButton === 0 ? this.state.correctAnswer.toString() : this.generateFakeAnswer()}</Text>
+                <Text style={styles.buttonText}>{this.state.numberToSelectCorrectAnswerButton === 0 ? this.state.correctAnswer.toString() : this.state.fakeAnswer1}</Text>
               </TouchableHighlight>
             </View>
             <View style={{flexDirection: 'row'}}>
@@ -120,7 +196,7 @@ export default class App extends React.Component {
                 onPress={this.state.numberToSelectCorrectAnswerButton == 1 ? this.handleCorrectResult : this.handleErrorResult}
                 style={styles.button}
               >
-                <Text style={styles.buttonText}>{this.state.numberToSelectCorrectAnswerButton == 1 ? this.state.correctAnswer.toString() : this.generateFakeAnswer()}</Text>
+                <Text style={styles.buttonText}>{this.state.numberToSelectCorrectAnswerButton == 1 ? this.state.correctAnswer.toString() : this.state.fakeAnswer2}</Text>
               </TouchableHighlight>
             </View>
             <View style={{flexDirection: 'row'}}>
@@ -128,7 +204,7 @@ export default class App extends React.Component {
                 onPress={this.state.numberToSelectCorrectAnswerButton == 2 ? this.handleCorrectResult : this.handleErrorResult}
                 style={styles.button}
               >
-                <Text style={styles.buttonText}>{this.state.numberToSelectCorrectAnswerButton == 2 ? this.state.correctAnswer.toString() : this.generateFakeAnswer()}</Text>
+                <Text style={styles.buttonText}>{this.state.numberToSelectCorrectAnswerButton == 2 ? this.state.correctAnswer.toString() : this.state.fakeAnswer3}</Text>
               </TouchableHighlight>
             </View>
           </View>
@@ -156,7 +232,7 @@ const styles = StyleSheet.create({
   },
   operation: {
     fontSize: 45,
-    color: '#EFEFEF',
+    color: '#EFEFEF'
   },
   button: {
     alignItems: 'center',
