@@ -31,7 +31,7 @@ export default class App extends React.Component {
       fakeAnswer2: '',
       fakeAnswer3: '',
       lives: 3,
-      startMessage: '5 seconds Math Challenge',
+      startMessage: `5s Math Challenge`,
       error: null
     };
     this.timer = 0;
@@ -178,9 +178,9 @@ export default class App extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-      {this.state.startMessage != null ? (
-      <View>
+      {this.state.startMessage != null ? ( <View style={styles.centerView}>
         <Text style={styles.startText}>{this.state.startMessage ? this.state.startMessage : null}</Text>
+        <Text style={styles.operation}> &nbsp; </Text>
         <AwesomeButtonRick
           onPress={this.restart}
           type="secondary"
@@ -191,11 +191,13 @@ export default class App extends React.Component {
       {this.state.startMessage == null ? (
         <Text style={styles.scoreboard}>Time: {this.state.timeRemaining} Lives: {this.state.lives} Score: {this.state.puntuation}</Text>
       ) : null }
-      {this.state.error === null && this.state.startMessage === null ? (
-        <View>
-          <Text style={styles.operation}> &nbsp; </Text>
-          <Text style={styles.operation}>{this.state.numberLeft} {this.state.operator} {this.state.numberRight}</Text>
-          <Text style={styles.operation}> &nbsp; </Text>
+      {this.state.error === null && this.state.startMessage === null ? ( <View style={styles.centerView}>
+          <View style={{flexDirection: 'row'}}>
+            <Text style={styles.operation}>
+              {this.state.numberLeft} {this.state.operator} {this.state.numberRight}
+            </Text>
+          </View>
+            <Text style={styles.operation}> &nbsp; </Text>
           <View>
             <View style={{flexDirection: 'row'}}>
               <AwesomeButtonRick
@@ -205,6 +207,7 @@ export default class App extends React.Component {
                 {this.state.numberToSelectCorrectAnswerButton === 0 ? this.state.correctAnswer.toString() : this.state.fakeAnswer1}
               </AwesomeButtonRick>
             </View>
+            <Text style={styles.operation}> &nbsp; </Text>
             <View style={{flexDirection: 'row'}}>
               <AwesomeButtonRick
                 onPress={this.state.numberToSelectCorrectAnswerButton == 1 ? this.handleCorrectResult : this.handleErrorResult}
@@ -213,6 +216,7 @@ export default class App extends React.Component {
                 {this.state.numberToSelectCorrectAnswerButton == 1 ? this.state.correctAnswer.toString() : this.state.fakeAnswer2}
               </AwesomeButtonRick>
             </View>
+            <Text style={styles.operation}> &nbsp; </Text>
             <View style={{flexDirection: 'row'}}>
               <AwesomeButtonRick
                 onPress={this.state.numberToSelectCorrectAnswerButton == 2 ? this.handleCorrectResult : this.handleErrorResult}
@@ -223,8 +227,7 @@ export default class App extends React.Component {
             </View>
           </View>
         </View>) : null}
-        {this.state.error != null ? (
-        <View>
+        {this.state.error != null ? ( <View style={styles.centerView}>
           <Text style={styles.errorText}>{this.state.error ? this.state.error : null}</Text>
           <AwesomeButtonRick
             onPress={this.restart}
@@ -241,13 +244,13 @@ export default class App extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#3F5765',
+    backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
   },
   operation: {
     fontSize: 45,
-    color: '#EFEFEF'
+    color: '#377daa'
   },
   button: {
     alignItems: 'center',
@@ -260,7 +263,8 @@ const styles = StyleSheet.create({
   },
   startText: {
     fontSize: 80,
-    color: '#FFFFFF'
+    textAlign: 'center',
+    color: '#377daa'
   },
   errorText: {
     fontSize: 80,
@@ -268,6 +272,12 @@ const styles = StyleSheet.create({
   },
   scoreboard: {
     fontSize: 15,
-    color: '#EFEFEF'
+    color: '#377daa'
+  },
+  centerText: {
+    textAlign: 'center'
+  },
+  centerView: {
+    alignItems: 'center'
   }
 });
