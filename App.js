@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableHighlight, Button } from 'react-native';
+import AwesomeButtonRick from 'react-native-really-awesome-button/src/themes/rick';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -170,7 +171,7 @@ export default class App extends React.Component {
       }
     }, () => {
       this.timer = 0;
-      this.startTimer(); 
+      this.startTimer();
     });
   }
 
@@ -180,11 +181,12 @@ export default class App extends React.Component {
       {this.state.startMessage != null ? (
       <View>
         <Text style={styles.startText}>{this.state.startMessage ? this.state.startMessage : null}</Text>
-        <Button
+        <AwesomeButtonRick
           onPress={this.restart}
-          title="Play"
-          color="#EFEFEF"
-        />
+          type="secondary"
+        >
+          START
+        </AwesomeButtonRick>
       </View>) : null}
       {this.state.startMessage == null ? (
         <Text style={styles.scoreboard}>Time: {this.state.timeRemaining} Lives: {this.state.lives} Score: {this.state.puntuation}</Text>
@@ -196,39 +198,40 @@ export default class App extends React.Component {
           <Text style={styles.operation}> &nbsp; </Text>
           <View>
             <View style={{flexDirection: 'row'}}>
-              <TouchableHighlight
+              <AwesomeButtonRick
                 onPress={this.state.numberToSelectCorrectAnswerButton === 0 ? this.handleCorrectResult : this.handleErrorResult}
-                style={styles.button}
+                type="primary"
               >
-                <Text style={styles.buttonText}>{this.state.numberToSelectCorrectAnswerButton === 0 ? this.state.correctAnswer.toString() : this.state.fakeAnswer1}</Text>
-              </TouchableHighlight>
+                {this.state.numberToSelectCorrectAnswerButton === 0 ? this.state.correctAnswer.toString() : this.state.fakeAnswer1}
+              </AwesomeButtonRick>
             </View>
             <View style={{flexDirection: 'row'}}>
-              <TouchableHighlight
+              <AwesomeButtonRick
                 onPress={this.state.numberToSelectCorrectAnswerButton == 1 ? this.handleCorrectResult : this.handleErrorResult}
-                style={styles.button}
+                type="primary"
               >
-                <Text style={styles.buttonText}>{this.state.numberToSelectCorrectAnswerButton == 1 ? this.state.correctAnswer.toString() : this.state.fakeAnswer2}</Text>
-              </TouchableHighlight>
+                {this.state.numberToSelectCorrectAnswerButton == 1 ? this.state.correctAnswer.toString() : this.state.fakeAnswer2}
+              </AwesomeButtonRick>
             </View>
             <View style={{flexDirection: 'row'}}>
-              <TouchableHighlight
+              <AwesomeButtonRick
                 onPress={this.state.numberToSelectCorrectAnswerButton == 2 ? this.handleCorrectResult : this.handleErrorResult}
-                style={styles.button}
+                type="primary"
               >
-                <Text style={styles.buttonText}>{this.state.numberToSelectCorrectAnswerButton == 2 ? this.state.correctAnswer.toString() : this.state.fakeAnswer3}</Text>
-              </TouchableHighlight>
+                {this.state.numberToSelectCorrectAnswerButton == 2 ? this.state.correctAnswer.toString() : this.state.fakeAnswer3}
+              </AwesomeButtonRick>
             </View>
           </View>
         </View>) : null}
         {this.state.error != null ? (
         <View>
           <Text style={styles.errorText}>{this.state.error ? this.state.error : null}</Text>
-          <Button
+          <AwesomeButtonRick
             onPress={this.restart}
-            title="Play Again"
-            color="#EFEFEF"
-          />
+            type="secondary"
+          >
+            PLAY AGAIN
+          </AwesomeButtonRick>
         </View>) : null}
       </View>
     );
